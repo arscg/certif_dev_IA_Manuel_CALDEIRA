@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
+</head>
+<body>
+    <h2>Connexion</h2>
+    <form id="loginForm">
+        <label for="username">Nom d'utilisateur:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Mot de passe:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <button type="submit">Se connecter</button>
+    </form>
+
+    <h2>Historique des RMSE</h2>
+    <button id="getHistoryBtn">Obtenir l'historique des RMSE</button>
+    <pre id="rmseHistoryContainer"></pre>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Authentification réussie');
+                    localStorage.setItem('token', result.token);
+                } else {
+                    alert('Authentification échouée: ' + (result.message || 'Erreur inconnue'));
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur lors de la connexion');
+            }
+        });
+
+        document.getElementById('getHistoryBtn').addEventListener('click', async function() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Vous devez vous connecter d\'abord');
+                return;
+            }
+
+            try {
+                const response = await fetch('/sources', {
+                    method: 'GET',
+                    headers: {
+                        'x-access-tokens': token
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.text(); // Obtenir le texte brut de la réponse
+                    document.querySelector('pre').textContent = result; // Afficher le texte brut dans le premier élément <pre>
+                } else {
+                    const errorText = await response.text(); // Obtenir le texte brut de l'erreur
+                    document.querySelector('pre').textContent = 'Erreur: ' + errorText;
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.querySelector('pre').textContent = 'Erreur lors de la récupération de l\'historique des RMSE';
+            }
+        });
+    </script>
+</body>
+</html>

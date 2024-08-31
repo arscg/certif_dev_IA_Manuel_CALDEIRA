@@ -1,0 +1,13 @@
+database:
+  type: 'mysql'
+  driver: 'pymysql'
+  username: 'root'
+  password: 'root'  # Remplacez 'votre_mot_de_passe' par le mot de passe réel de l'utilisateur root.
+  host: 'localhost'
+  port: 3306
+  database_name: 'animov_stats'  # Remplacez ceci par le nom de votre base de données.
+  options:
+    auth_plugin: 'mysql_native_password'
+
+
+repertoire_segments: './videos/test_chevres'

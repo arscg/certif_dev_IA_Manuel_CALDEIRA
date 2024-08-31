@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  mysql:
+    container_name: ${CUSTOMER}-mysql
+    image: mysql:5.7
+    restart: always
+    ports:
+      - 3306:3306
+    networks:
+      - localhost
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+  mongodb:
+    container_name: ${CUSTOMER}-mongodb
+    image: mongo:4.4
+    restart: always
+    ports:
+      - 27017:27017
+    networks:
+      - localhost
+    volumes:
+      - mongodb-data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+
+volumes:
+  mysql-data:
+    name: ${CUSTOMER}-mysql-data
+  mongodb-data:
+    name: ${CUSTOMER}-mongodb-data
+
+networks:
+  localhost:
+    driver: bridge
+    name: ${CUSTOMER}-localhost

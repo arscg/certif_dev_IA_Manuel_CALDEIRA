@@ -1,0 +1,6 @@
+(ANIMOV_pytorch) PS C:\Users\arsca> mlflow server --backend-store-uri sqlite:///d:/mlflow.db --default-artifact-root ./mlflow-artifacts --host 0.0.0.0 --port 5000
+
+
+(ANIMOV_pytorch) PS D:\inrae_new_2023\inrae_new_2023\api_flask> python app3jwt.py
+
+(ANIMOV_Yolo) PS D:\inrae_new_2023\inrae_new_2023\app> streamlit run app.fr
