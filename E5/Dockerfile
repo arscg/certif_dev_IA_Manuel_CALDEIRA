@@ -1,22 +1,34 @@
-# Utiliser une image Python Alpine comme image de base
-FROM python:3.9-alpine
+# Utilise l'image Alpine comme base
+FROM alpine:latest
 
-# Installer les dépendances nécessaires pour construire les paquets Python et pour psutil
-RUN apk add --no-cache gcc musl-dev linux-headers
+# Installe les dépendances nécessaires, y compris les outils de compilation et les fichiers d'en-tête Python
+RUN apk add --no-cache python3 py3-pip bash gcc musl-dev linux-headers python3-dev
 
-# Définir le répertoire de travail dans le conteneur
-WORKDIR /app
+# Crée un environnement virtuel Python
+RUN python3 -m venv /opt/venv
 
-# Copier les fichiers requirements.txt et les fichiers .py dans le répertoire de travail
-COPY requirements.txt requirements.txt
-COPY api.py api.py
-COPY config.yaml config.yaml
+# Active l'environnement virtuel et met à jour pip
+RUN . /opt/venv/bin/activate && pip install --upgrade pip
 
-# Installer les dépendances Python
-RUN pip install --no-cache-dir -r requirements.txt
+# Crée un répertoire pour l'application
+RUN mkdir -p /app
 
-# Exposer le port sur lequel l'application Flask va tourner
+# Copie des fichiers de configuration et des scripts dans le conteneur
+COPY app/config.yaml config.yaml
+COPY app/api.py /api.py
+
+# Copie du fichier requirements.txt et installation des dépendances Python
+COPY ./requirements.txt /requirements.txt
+RUN . /opt/venv/bin/activate && pip install -r /requirements.txt
+
+# Définit le répertoire de travail
+WORKDIR /
+
+# Active l'environnement virtuel
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Expose le port utilisé par l'application Flask (port 5002 par exemple)
 EXPOSE 5002
 
-# Démarrer le script api.py
-CMD ["python", "api.py"]
+# Commande pour exécuter le script Python
+CMD ["python3", "api.py"]

@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, jsonify, Response, send_from_directory, render_template_string, redirect
+from Flask import request, render_template, jsonify, Response, send_from_directory, render_template_string, redirect
 # from keras.preprocessing.image import img_to_array, load_img
 # import tensorflow as tf
 import requests
