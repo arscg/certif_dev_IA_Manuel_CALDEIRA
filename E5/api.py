@@ -76,11 +76,11 @@ with open("config.yaml", "r") as file:
     config = yaml.safe_load(file)         
     container_name_or_id = config["container_name_or_id"]
 
-def send_email(average_rmse):
-    from_email = "manu@certif.fr"
+def send_email(message, sujet):
+    from_email = "serveur_alert@certif.fr"
     to_email = "arscg@certif.fr"
-    subject = "Alerte: RMSE moyen élevé"
-    body = f"La moyenne des RMSE est supérieure à 25. Valeur actuelle: {average_rmse}"
+    subject = sujet
+    body = message
 
     # Configurer le serveur SMTP
     smtp_server = "localhost"
@@ -105,106 +105,10 @@ def send_email(average_rmse):
 app = Flask(__name__)
 
 @app.route('/send_mail', methods=['GET'])
-def send_mail( corps = "Bonjour, ceci est un message de test envoyé depuis Python à Yopmail test 2.", subjet = "Sujet de votre email"):
+def send_mail( corps = "Bonjour, ceci est un message de test envoyé depuis Python.", subjet = "Sujet de votre email"):
 
-    from_email = "manu@certif.fr"
-    to_email = "arscg@certif.fr"
-    subject = "Alerte serveur !!!"
-
-    # Configurer le serveur SMTP
-    smtp_server = "localhost"
-    smtp_port =587
-    smtp_user = "mlflow@certif.fr"
-    smtp_password = "mlflow"
-
-    # Créer le message
-    msg = MIMEMultipart()
-    msg['From'] = from_email
-    msg['To'] = to_email
-    msg['Subject'] = subject
-    msg.attach(MIMEText(corps, 'plain'))
-    try:
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.login(smtp_user, smtp_password)
-        text = msg.as_string()
-        if WITH_MAIL:
-            server.sendmail(from_email, to_email, text)
-            logger.info(f"Email envoye avec succes à HMail {to_email} !!!")
-        else:
-            logger.info(f"Email envoye SIMULE !!!")
-
-        server.quit()
-        
-    except Exception as e:
-        logger.error(f"Erreur lors de l'envoi de l'email à Yopmail via Outlook: {e}")
-    
+    send_email(corps, subjet)
     return 'send mail !!!'
-
-# # @app.route('/grafana-dashboard')
-# @app.route('/')
-# def redirection_dashboards():
-#     # L'URL à ouvrir dans une nouvelle fenêtre
-#     nouvelle_url = f"http://localhost:3001/public-dashboards/cb39155f86d3468fb72a2a83cbf123f7?orgId=1&refresh=5s"
-
-#     # L'URL pour remplacer la fenêtre courante
-#     remplacement_url = f"http://localhost:3001/public-dashboards/cb39155f86d3468fb72a2a83cbf123f7?orgId=1&refresh=5s"
-
-#     # Script JavaScript pour ouvrir une nouvelle fenêtre et remplacer la fenêtre courante
-#     html = f"""
-#     <html>
-#     <head>
-#         <title>Ouvrir et Remplacer</title>
-#         <script type="text/javascript">
-#             window.onload = function() {{
-#                 // Ouvrir une nouvelle fenêtre
-#                 window.open("{nouvelle_url}", "_blank");
-
-#                 // Remplacer la fenêtre courante
-#                 window.location.replace("{remplacement_url}");
-#             }};
-#         </script>
-#     </head>
-#     <body>
-#         <h1>Une nouvelle fenêtre s'ouvrira et la fenêtre courante sera remplacée.</h1>
-#     </body>
-#     </html>
-#     """
-
-#     return render_template_string(html)
-
-# @app.route('/upload', methods=['POST'])
-# def upload_file():
-#     if 'file' not in request.files:
-#         return 'Aucun fichier envoyé', 400
-#     file = request.files['file']
-#     if file.filename == '':
-#         return 'Aucun fichier sélectionné', 400
-#     if file:
-#         # print(app.config)
-        
-#         filepath = os.path.join('./uploads', file.filename)
-#         print(filepath)
-
-#         file.save(filepath)
-        
-#         return f'Fichier {file.filename} enregistré avec succès ', 200
-
-# @app.route('/uploads/<filename>')
-# def uploaded_file(filename):
-#     # Vérifiez si une URL externe est fournie en tant que paramètre de requête
-#     external_url = request.args.get('url')
-
-#     if external_url:
-#         # Si une URL externe est fournie, téléchargez et renvoyez l'image depuis cette URL
-#         response = requests.get(external_url)
-#         return Response(response.content, mimetype=response.headers['Content-Type'])
-#     else:
-#         # Sinon, essayez de renvoyer le fichier du dossier local
-#         try:
-#             return send_from_directory('uploads', filename)
-#         except FileNotFoundError:
-#             return "Fichier non trouvé", 404
-
 
 @app.route('/receive_data', methods=['POST'])
 def receive_data():
@@ -349,11 +253,6 @@ def manage():
                 send_mail("Stop database, flask data animov & demon.", "Serveur defaut")
         
     return render_template('managing.html')
-
-# @app.route('/logs')
-# def afficher_logs():
-#     lignes_de_log = lire_logs('mon_application.log')
-#     return render_template('logs.html', logs=lignes_de_log)
 
 @app.route('/get_logs', methods=['GET'])
 def get_logs():
