@@ -32,8 +32,8 @@ REM Démarrer le serveur mlflow
 start "MLflow Server" cmd /k "CALL conda.bat activate ANIMOV_Yolo && mlflow server --backend-store-uri sqlite:///./mlflow.db --default-artifact-root ./mlflow-artifacts --host localhost --port 5000"
 
 REM API E5
-cd /d %BASE_DIR%E5
-start "API E5" cmd /k "CALL conda.bat activate ANIMOV_Yolo && python api.py"
+REM cd /d %BASE_DIR%E5
+REM start "API E5" cmd /k "CALL conda.bat activate ANIMOV_Yolo && python api.py"
 
 REM API E3E4
 cd /d %BASE_DIR%E4\API
@@ -53,8 +53,8 @@ cd /d %BASE_DIR%E4\Streamlit
 start "Streamlit App EDA" cmd /k "CALL conda.bat activate ANIMOV_Yolo && streamlit run Accueil.py --server.port 8502"
 
 REM Démarrer l'application Streamlit
-cd /d %BASE_DIR%E5
-start "demon" cmd /k "CALL conda.bat activate ANIMOV_Yolo && python demon.py"
+REM cd /d %BASE_DIR%E5
+REM start "demon" cmd /k "CALL conda.bat activate ANIMOV_Yolo && python demon.py"
 	
 REM Ouvrir l'URL spécifique dans le navigateur
 start "" "http://localhost:3001/public-dashboards/cb39155f86d3468fb72a2a83cbf123f7?orgId=1&refresh=5s"
