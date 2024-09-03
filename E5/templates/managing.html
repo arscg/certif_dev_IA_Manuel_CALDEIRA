@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Résolution incident</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="submit"] {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        input[type="submit"]:active {
+            background-color: #004494;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="form-container">
+            <h1>Demon:</h1>
+            <form method="post">
+                <input type="submit" name="demon" value="Marche" />
+                <input type="submit" name="demon" value="Arret" />
+            </form>
+        </div>
+
+        <div class="form-container">
+            <h1>MySql:</h1>
+            <form method="post">
+                <input type="submit" name="mysql" value="Marche" />
+                <input type="submit" name="mysql" value="Arret" />
+            </form>
+        </div>
+
+        <div class="form-container">
+            <h1>All:</h1>
+            <form method="post">
+                <input type="submit" name="all" value="Marche" />
+                <input type="submit" name="all" value="Arret" />
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>
