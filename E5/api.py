@@ -1,6 +1,4 @@
 from flask import Flask, request, render_template, jsonify, Response, send_from_directory, render_template_string, redirect
-# from keras.preprocessing.image import img_to_array, load_img
-# import tensorflow as tf
 import requests
 import time
 from datetime import datetime
@@ -30,7 +28,7 @@ log_levels = {
     'CRITICAL': 50
 }
 
-WITH_MAIL= False
+WITH_MAIL= True
 
 seuils = {
     "cpu": {"seuil1": 90, "seuil2": 30, 'state' : 0, 'timestamp': None},
@@ -151,6 +149,7 @@ def receive_data():
         data['running'] = elapsed_time < 10 if elapsed_time is not None else False
 
         process_alarm("cpu")
+        process_alarm("memory")
 
         # process_stop_overmemory()
         
@@ -212,12 +211,12 @@ def get_check_demon():
         if seuils["demon"]["state"] == 0:
             logger.error("Erreur connection demon.")
             seuils["demon"]["state"] = 1
-            # send_mail("Erreur connection demon.", "Serveur defaut")
+            send_mail("Erreur connection demon.", "Serveur defaut")
     else:
         if seuils["demon"]["state"] == 1:
             logger.warning("Reconnection demon.")
             seuils["demon"]["state"] = 0
-            # send_mail("Reconnection demon.", "Serveur defaut")
+            send_mail("Reconnection demon.", "Serveur defaut")
          
     return jsonify(running)
 
