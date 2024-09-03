@@ -447,11 +447,11 @@ def process_alarm(device):
     sll = data['pc_data'][0][device]
 
     if sll > seuils[device]["seuil1"] and seuils[device]["state"] == 0:
-        logger.info(f"Alerte {device} {sll} %.")
+        logger.warning(f"Alerte {device} {sll} %.")
         seuils[device]["state"]=1
         send_mail(f"Alerte {device} {sll} %.", "Serveur en surcharge")
     elif sll < seuils[device]["seuil2"] and seuils[device]["state"] == 1:
-        logger.info(f"Fin d'alerte {device} {sll} %.")
+        logger.warning(f"Fin d'alerte {device} {sll} %.")
         seuils[device]["state"]=0
         send_mail(f"Fin d'alerte {device} {sll} %.", "Fin serveur en surcharge")
 
@@ -459,11 +459,11 @@ def process_alarm_elapse( delay, device = "elapse"):
     global data, seuils
 
     if delay > seuils[device]["seuil1"] and seuils[device]["state"] == 0:
-        logger.info(f"Alerte reponce demon {delay} s.")
+        logger.warning(f"Alerte reponce demon {delay} s.")
         seuils[device]["state"]=1
         send_mail(f"Alerte reponce demon {delay} s.", "Demon réponce !")
     elif delay < seuils[device]["seuil2"] and seuils[device]["state"] == 1:
-        logger.info(f"Fin d'alerte reponce demon  {delay} s.")
+        logger.warning(f"Fin d'alerte reponce demon  {delay} s.")
         seuils[device]["state"]=0
         send_mail(f"Fin d'alerte reponce demon {delay} s.", "Demon réponce !")
 
