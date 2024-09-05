@@ -122,7 +122,7 @@ if agree:
         st.error(f"Erreur lors de la lecture du fichier : {str(e)}")
 
 # Paramètres de la base de données pour MySQL
-db_name = "ANIMOV_CSV_data_"
+db_name = "ANIMOV_CSV_data"
 base_de_donnees_url = f"mysql+pymysql://root:admin@localhost:3306/{db_name}"
 
 # Localisation du dossier parent et recherche des sous-dossiers
