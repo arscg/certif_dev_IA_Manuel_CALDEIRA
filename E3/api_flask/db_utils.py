@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jun 28 14:03:07 2024
-
-@author: arsca
-"""
-
 import sqlite3
 import datetime
 import jwt
