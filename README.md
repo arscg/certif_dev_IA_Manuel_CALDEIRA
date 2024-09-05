@@ -109,3 +109,70 @@ Le projet est organisé comme suit :
 ## Usage
 
 Vous pouvez maintenant utiliser et interagir avec les différents services API, Interface utilisateur, et autres composants en fonction de votre projet.
+
+## Configuration de hMailServer
+
+En plus des étapes d'installation précédentes, vous pouvez configurer hMailServer pour gérer les emails du projet. Suivez les étapes ci-dessous pour ajouter les comptes de messagerie nécessaires.
+
+### 10. Installer hMailServer
+
+hMailServer est un serveur de messagerie gratuit qui fonctionnera localement.
+
+1. **Télécharger hMailServer :**
+   - Rendez-vous sur le site officiel de [hMailServer](https://www.hmailserver.com/download) et téléchargez la dernière version.
+
+2. **Installer hMailServer :**
+   - Exécutez le fichier d'installation et suivez les instructions pour installer hMailServer sur votre machine.
+   - Pendant l'installation, choisissez `Use built-in database` pour une configuration plus simple.
+
+### 11. Configurer un domaine et des comptes de messagerie
+
+1. **Ajouter un domaine :**
+   - Ouvrez **hMailServer Administrator**.
+   - Dans la section **Domains**, cliquez sur **Add...** pour créer un nouveau domaine.
+   - Entrez le nom de domaine `certif.fr` et cliquez sur **Save**.
+
+2. **Ajouter des comptes de messagerie :**
+   - Sous le domaine **certif.fr**, cliquez sur **Accounts**.
+   - Cliquez sur **Add...** pour ajouter un nouveau compte.
+   - Remplissez les informations pour chaque compte :
+     - **Address** : `arscg@certif.fr`
+     - **Password** : Entrez un mot de passe sécurisé.
+   - Cliquez sur **Save** pour créer le compte.
+   - Répétez cette étape pour les autres comptes :
+     - `manu@certif.fr`
+     - `mflow@certif.fr`
+
+3. **Vérification des comptes :**
+   - Assurez-vous que tous les comptes sont listés sous **Accounts** pour le domaine `certif.fr` dans hMailServer Administrator.
+
+### 12. Configurer Thunderbird Mail
+
+Thunderbird est un client de messagerie open-source qui vous permettra de tester et d'interagir avec les emails envoyés/reçus par votre application via hMailServer.
+
+1. **Télécharger Thunderbird :**
+   - Rendez-vous sur le site officiel de [Thunderbird](https://www.thunderbird.net/) et téléchargez la dernière version.
+
+2. **Installer Thunderbird :**
+   - Installez Thunderbird en suivant les instructions.
+
+3. **Configurer un compte de messagerie :**
+   - Ouvrez Thunderbird et ajoutez un compte en utilisant les informations configurées dans hMailServer (par exemple, `arscg@certif.fr`).
+   - Assurez-vous que Thunderbird est configuré pour utiliser les mêmes ports que hMailServer pour IMAP/POP3 et SMTP.
+
+### 13. Vérifier l'intégration des emails
+
+1. **Tester l'envoi et la réception des emails :**
+   - Utilisez votre application pour envoyer un email via l'API ou un autre module.
+   - Vous pouvez tester l'envoi d'email en accédant à l'URL suivante dans votre navigateur ou en utilisant un outil comme `curl` :
+     ```http
+     http://127.0.0.1:5002/send_mail
+     ```
+   - Vérifiez dans Thunderbird que l'email a bien été envoyé et reçu.
+
+2. **Déboguer en cas de problème :**
+   - Si vous rencontrez des problèmes, vérifiez les logs de hMailServer et assurez-vous que les configurations SMTP/IMAP sont correctes.
+
+### 14. Finaliser la configuration
+
+Après avoir configuré hMailServer et Thunderbird, et testé l'envoi d'emails via `http://127.0.0.1:5002/send_mail`, vous pouvez poursuivre avec les tests de votre application en ce qui concerne la gestion des emails.
