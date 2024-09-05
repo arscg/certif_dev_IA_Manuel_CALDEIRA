@@ -61,60 +61,62 @@ def train(df):
     response_train = requests.post(url_train, headers=headers, json=data)
     
     if response_train.status_code == 200:
-        st.success("Entraînement réussi avec succès !")
+        st.success("Entraînement réussi !")
+
+        col1, col2, col3 = st.columns([2,3, 2])
         
-        try:
-            data_response = response_train.json()
-        except ValueError:
-            st.error("La réponse n'est pas un JSON valide.")
-            return
-
-        if 'predictions' in data_response:
-            predictions_json = data_response['predictions']
-            
+        with col2:
             try:
-                predictions_df = pd.read_json(predictions_json)
-                predictions_df['Date'] = pd.to_datetime(predictions_df['Date'])
-
-                # Ajouter la colonne ratio
-                try:
-                    df['ratio'] = (df['Effectif debout'] / (df['Effectif couche'] + df['Effectif debout'])) * 100
-                except KeyError as e:
-                    st.error(f"Erreur lors du calcul du ratio : colonne manquante {e}")
-                    return
-                
-                # Conversion en timestamp et mise en index
-                df['timestamp'] = pd.to_datetime(df['date'], errors='coerce')
-                df = df.set_index('timestamp')
-
-                # Sélection des colonnes numériques et calcul de la médiane sur un échantillonnage de 15 minutes
-                df_numeric = df.select_dtypes(include=[float, int])
-                median_df = df_numeric.resample('15T').median()
-
-                # Filtrage pour ne garder que les deux derniers jours
-                last_two_days = median_df.loc[median_df.index >= (median_df.index.max() - pd.Timedelta(days=2))]
-
-                # Tracer les courbes des valeurs et du ratio sur un seul graphique avec matplotlib
-                plt.figure(figsize=(10, 6))
-
-                # Courbe des valeurs du modèle prédictif
-                plt.plot(predictions_df.set_index('Date').index, predictions_df['Valeurs'], label='Valeurs', color='blue')
-
-                # Courbe du ratio
-                plt.plot(last_two_days.index, last_two_days['ratio'], label='Ratio', color='orange', linestyle='--')
-
-                # Ajouter le titre et les légendes
-                plt.title('Valeurs et Ratio sur le même graphique')
-                plt.xlabel('Date')
-                plt.ylabel('Prédiction / Verité terrain')
-                plt.legend()
-
-                # Afficher le graphique dans Streamlit
-                st.pyplot(plt)
-
-            except ValueError as e:
-                st.error(f"Erreur lors de la lecture du JSON : {e}")
+                data_response = response_train.json()
+            except ValueError:
+                st.error("La réponse n'est pas un JSON valide.")
                 return
+
+            if 'predictions' in data_response:
+                predictions_json = data_response['predictions']
+                
+                try:
+                    predictions_df = pd.read_json(predictions_json)
+                    predictions_df['Date'] = pd.to_datetime(predictions_df['Date'])
+
+                    # Ajouter la colonne ratio
+                    try:
+                        df['ratio'] = (df['Effectif debout'] / (df['Effectif couche'] + df['Effectif debout'])) * 100
+                    except KeyError as e:
+                        st.error(f"Erreur lors du calcul du ratio : colonne manquante {e}")
+                        return
+                    
+                    # Conversion en timestamp et mise en index
+                    df['timestamp'] = pd.to_datetime(df['date'], errors='coerce')
+                    df = df.set_index('timestamp')
+
+                    # Sélection des colonnes numériques et calcul de la médiane sur un échantillonnage de 15 minutes
+                    df_numeric = df.select_dtypes(include=[float, int])
+                    median_df = df_numeric.resample('15T').median()
+
+                    # Filtrage pour ne garder que les deux derniers jours
+                    last_two_days = median_df.loc[median_df.index >= (median_df.index.max() - pd.Timedelta(days=2))]
+
+                    # Tracer les courbes des valeurs et du ratio sur un seul graphique avec matplotlib
+                    plt.figure(figsize=(10, 6))
+
+                    # Courbe des valeurs du modèle prédictif
+                    plt.plot(predictions_df.set_index('Date').index, predictions_df['Valeurs'], label='Prédiction', color='blue')
+
+                    # Courbe du ratio
+                    plt.plot(last_two_days.index, last_two_days['ratio'], label='Verité terrain', color='orange', linestyle='--')
+
+                    # Ajouter le titre et les légendes
+                    plt.title('Prédiction et Verité terrain sur le même graphique')
+                    plt.xlabel('Date')
+                    plt.legend()
+
+                    # Afficher le graphique dans Streamlit
+                    st.pyplot(plt)
+
+                except ValueError as e:
+                    st.error(f"Erreur lors de la lecture du JSON : {e}")
+                    return
 
 
 def prediction(filtered_df, ratio_df, median_df):
@@ -153,7 +155,7 @@ def prediction(filtered_df, ratio_df, median_df):
                 ratio_df['date'] = pd.to_datetime(ratio_df['date'], errors='coerce')
                 merged_df = pd.merge(df_response, ratio_df, left_on='Date', right_on='date')
                 rmse = np.sqrt(mean_squared_error(merged_df['Valeurs'], merged_df['Ratio debout']))
-                st.write(f"RMSE: {rmse}")
+                st.write(f"RMSE: {round(rmse,3)}")
 
                 plt.figure(figsize=(10, 6))
                 plt.plot(df_response['Date'], df_response['Valeurs'], color='blue', label='Valeurs API')
@@ -188,6 +190,7 @@ def prediction(filtered_df, ratio_df, median_df):
                 'rmse': rmse,
                 "model": response_data['model'],
                 'version': response_data['version'],
+                'exec_time': response_data['prediction_time'],
                 'graphique': img_data.decode('latin1'),
                 'ground_truth': ground_truth,
                 'predictions': predictions
@@ -210,7 +213,6 @@ def prediction(filtered_df, ratio_df, median_df):
             response_rmse_history = requests.get(url_rmse_history, headers=headers, params=params)
             if response_rmse_history.status_code == 200:
                 st.success("Historique des RMSE récupéré avec succès !")
-                # st.json(response_rmse_history.json())
 
                 with col2: 
                     df = pd.DataFrame(response_rmse_history.json()["rmse_history"])
@@ -227,6 +229,31 @@ def prediction(filtered_df, ratio_df, median_df):
                     plt.xticks(rotation=45, ha='right')
                     plt.tight_layout()
 
+                    st.pyplot(plt)
+
+                with col3:
+
+                    avg_execute_time = response_rmse_history.json()['average_execute_time']
+
+                    st.write(f"Temps moyen d'execution des dernière prédictions : {round(avg_execute_time, 2)} s")
+
+                    df = pd.DataFrame(response_rmse_history.json()["rmse_history"])
+
+                    # Extraire les valeurs de temps et les identifiants des runs
+                    temps_exec = [entry["temps_exec"] for entry in df["metrics"]]
+
+                    # Créer la courbe
+                    plt.figure(figsize=(10, 6))
+                    plt.plot(df["run_id"][::-1], temps_exec[::-1], marker='o', linestyle='-', color='red', linewidth=2.5)
+                    plt.xlabel("Run ID")
+                    plt.ylabel("Temps d'exec.")
+                    plt.title("Temps d'execution des dernières predictions")
+                    plt.xticks(rotation=45, ha='right')
+                    plt.ylim(0)  # Définit le minimum de l'axe Y à 0
+                    plt.grid(True)  # Ajoute une grille pour faciliter la lecture des valeurs
+                    plt.tight_layout()
+
+                    # Afficher la courbe dans Streamlit
                     st.pyplot(plt)
             else:
                 st.error(f"Erreur lors de la récupération de l'historique des RMSE: {response_rmse_history.status_code}")
@@ -294,7 +321,7 @@ def training_form():
         st.write("Modèle entraîné avec les données des 5 premiers jours à partir de", selected_date)
 
 def prediction_form():
-    st.title("Prédiction avec le modèle")
+    st.title("Prédiction SARIMAX (En production)")
     df = load_data()
 
     # Sélectionner uniquement les colonnes nécessaires
