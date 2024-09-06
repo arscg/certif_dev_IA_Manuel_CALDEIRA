@@ -18,10 +18,10 @@ import streamlit as st
 warnings.filterwarnings("ignore")
 st.set_page_config(layout="wide")
 
-@st.experimental_dialog("Alerte modele")
+@st.experimental_dialog("Alerte model")
 def message(rmse):
-    st.write(f"RMSE moyen trop élévée - {rmse} !!")
-    st.write(f"Recalculer le modele !!")
+    st.write(f"RMSE moyen trop élévée - {round(rmse,3)} !!")
+    st.write(f"Recalculer le model !!")
 
 def convert_df_to_dict(df):
     df_copy = df.copy()
@@ -267,7 +267,7 @@ def prediction(filtered_df, ratio_df, median_df):
         st.error(f"Erreur lors de la requête de prédiction: {response_predict.status_code}")
         st.text(f"Contenu de la réponse brute: {response_predict.text}")
 
-    if response_rmse_history.json()["average_rmse"] > 20:
+    if response_rmse_history.json()["average_rmse"] > 25:
         message(response_rmse_history.json()["average_rmse"])
 
 def authentication_form():
