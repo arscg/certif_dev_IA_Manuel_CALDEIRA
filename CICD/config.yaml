@@ -1,0 +1,18 @@
+online: False
+
+SECRET_KEY : "^0&nWg&^cE^yl`wYylC2<RkwEE5a86VHpY(UKqF%,P_8*OU&$"
+
+token : {
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiTWFudSIsImV4cCI6MTcwNzk5NzMwMX0.jXl2EE5vlxQBndoemUAiu68dvbeRqCYAme0wPlbMQsU"
+}
+
+database:
+  type: 'mysql'
+  driver: 'pymysql'
+  username: 'root'
+  password: 'admin'  # Remplacez 'votre_mot_de_passe' par le mot de passe réel de l'utilisateur root.
+  host: 'localhost'
+  port: 3306
+  database_name: 'ANIMOV'  # Remplacez ceci par le nom de votre base de données.
+  options:
+    auth_plugin: 'mysql_native_password'
